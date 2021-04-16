@@ -22,29 +22,39 @@ class BookRepository extends ServiceEntityRepository
     // /**
     //  * @return Book[] Returns an array of Book objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function findAllORM(int $two): array
     {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $entityManager = $this->getEntityManager();
 
-    /*
-    public function findOneBySomeField($value): ?Book
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $query = $entityManager->createQuery(
+            'SELECT title, count(b.author_id)
+            FROM App\Entity\Book b
+			GROUP BY b.title
+			HAVING count(b.author_id) >= :two'
+        )->setParameter('two', $two);
+
+        // returns an array of Product objects
+        return $query->getResult();
     }
-    */
+    
+	/**
+	* @return Book[] Returns an array of Book objects
+	*/  
+    public function findAllSQL(int $two): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT b.title, COUNT(b.author_id) FROM Book b
+            GROUP BY b.title
+			HAVING COUNT(b.author_id) >= :two
+			';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['two' => $two]);
+
+        // returns an array of arrays (i.e. a raw data set)
+        return $stmt->fetchAllAssociative();
+    }
+    
 }

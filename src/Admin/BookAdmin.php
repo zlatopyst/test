@@ -4,6 +4,7 @@
 
 namespace App\Admin;
 
+use App\Repository\BookRepository;
 use App\Entity\Author;
 use App\Entity\Book;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -49,7 +50,5 @@ final class BookAdmin extends AbstractAdmin
         $listMapper->addIdentifier('Title');
         $listMapper->addIdentifier('Date');
         $listMapper->addIdentifier('Author');
-
-
     }
 }

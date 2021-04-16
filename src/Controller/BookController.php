@@ -9,12 +9,29 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/book")
  */
 class BookController extends AbstractController
 {
+	/**
+     * @Route("/sql", name="book_sql")
+     */
+    public function SQL(Request $request, BookRepository $bookRepository): Response
+    {
+		$two = '2';
+		$repository = $this->getDoctrine()->getRepository(Book::class);
+        $books = $repository->findAllSQL($two);
+		return new JsonResponse($books);
+		//$form = $this->createForm(BookType::class, $book);
+        //$form->handleRequest($request);
+		//return $this->render('book/new.html.twig', [
+        //    'book' => $book,
+        //    'form' => $form->createView(),
+        //]);
+    }
     /**
      * @Route("/", name="book_index", methods={"GET"})
      */
